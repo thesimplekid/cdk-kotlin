@@ -43,19 +43,12 @@ generate:
     # Generate Kotlin bindings
     echo "🎯 Generating Kotlin bindings..."
 
-    # Check if ktlint is available, if not use --no-format
-    if command -v ktlint &> /dev/null; then
-        cargo run --bin uniffi-bindgen generate \
-            --library ../../target/release/libcdk_ffi.dylib \
-            --language kotlin \
-            --out-dir ../../../cdk-kotlin/lib/src/main/kotlin
-    else
-        cargo run --bin uniffi-bindgen generate \
-            --library ../../target/release/libcdk_ffi.dylib \
-            --language kotlin \
-            --no-format \
-            --out-dir ../../../cdk-kotlin/lib/src/main/kotlin
-    fi
+    # Always skip formatting to avoid dependency on ktlint
+    cargo run --bin uniffi-bindgen generate \
+        --library ../../target/release/libcdk_ffi.dylib \
+        --language kotlin \
+        --no-format \
+        --out-dir ../../../cdk-kotlin/lib/src/main/kotlin
 
     echo "✅ Kotlin bindings generated successfully!"
     cd ../../../cdk-kotlin
