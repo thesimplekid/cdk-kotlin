@@ -46,8 +46,38 @@ dependencies {
 
 ```kotlin
 import org.cashudevkit.*
+import kotlinx.coroutines.runBlocking
 
-// Example usage - see androidTest for complete examples
+// Create an in-memory database
+val database = runBlocking { WalletSqliteDatabase.newInMemory() }
+
+// Configure the wallet
+val config = WalletConfig(targetProofCount = 10u)
+val mnemonic = generateMnemonic()
+
+// Create wallet instance
+val wallet = Wallet(
+    mintUrl = "https://testmint.cashu.space",
+    unit = CurrencyUnit.Sat,
+    mnemonic = mnemonic,
+    db = database,
+    config = config
+)
+
+// Create a mint quote for 1000 sats
+val amount = Amount(value = 1000UL)
+val mintQuote = wallet.mintQuote(
+    amount = amount,
+    description = "Test mint quote"
+)
+
+// Check wallet balance
+val balance = wallet.totalBalance()
+println("Wallet balance: ${balance.value} sats")
+
+// Clean up resources
+wallet.close()
+database.close()
 ```
 
 ## Architecture Support
@@ -58,17 +88,21 @@ The library includes native binaries for the following Android architectures:
 - x86 (32-bit Intel/AMD)
 - x86_64 (64-bit Intel/AMD)
 
-## Available Commands
-
-Use `just --list` to see all available commands. Key commands:
-- `just setup` - Set up local.properties from environment variables
-- `just build-android` - Build for all Android architectures
-- `just test` - Run comprehensive test suite
-- `just publish-local` - Publish to local Maven repository
 
 ## Development
 
-Run tests:
+### Generating Bindings
+
+To regenerate Kotlin bindings from the CDK FFI:
+
+```bash
+just generate
+```
+
+This updates the auto-generated `cdk_ffi.kt` file with the latest bindings.
+
+### Running Tests
+
 ```bash
 just test
 ```

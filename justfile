@@ -43,9 +43,30 @@ generate:
     # Generate Kotlin bindings
     echo "🎯 Generating Kotlin bindings..."
 
+    # Detect platform for correct library extension
+    OS=$(uname -s)
+    if [ "$OS" = "Darwin" ]; then
+        LIB_EXT="dylib"
+    elif [ "$OS" = "Linux" ]; then
+        LIB_EXT="so"
+    else
+        echo "❌ Error: Unsupported platform: $OS"
+        echo "   Supported platforms: macOS (Darwin), Linux"
+        exit 1
+    fi
+
+    LIB_PATH="../../target/release/libcdk_ffi.$LIB_EXT"
+
+    # Check if library exists
+    if [ ! -f "$LIB_PATH" ]; then
+        echo "❌ Error: Library not found at $LIB_PATH"
+        echo "   Make sure the build completed successfully"
+        exit 1
+    fi
+
     # Always skip formatting to avoid dependency on ktlint
     cargo run --bin uniffi-bindgen generate \
-        --library ../../target/release/libcdk_ffi.dylib \
+        --library "$LIB_PATH" \
         --language kotlin \
         --no-format \
         --out-dir ../../../cdk-kotlin/lib/src/main/kotlin
