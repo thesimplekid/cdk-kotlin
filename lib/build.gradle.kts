@@ -42,6 +42,15 @@ android {
         targetSdk = 35
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -52,21 +61,24 @@ android {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.10")
-    implementation("net.java.dev.jna:jna:5.14.0")
+    implementation("net.java.dev.jna:jna:5.14.0@aar")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    
+
     // Unit tests (JVM)
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.1.10")
-    
-    // Android instrumentation tests
+    testImplementation("net.java.dev.jna:jna:5.14.0")
+
+    // Android instrumentation tests - following BDK Android configuration
+    androidTestImplementation("com.github.tony19:logback-android:2.0.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
+    androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.1.10")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-    
+
     // Coroutines test support for unit tests
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
 }
