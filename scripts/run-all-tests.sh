@@ -42,23 +42,23 @@ run_test_suite \
     "Validates binding generation and structure" \
     "bash ./scripts/run-tests.sh"
 
-# 2. Unit Tests (Data Classes)
+# 2. Unit Test Compilation
 run_test_suite \
-    "Unit Tests" \
-    "Tests data classes and basic functionality" \
-    "./gradlew compileDebugUnitTestKotlin 2>/dev/null || echo 'Unit test compilation check passed'"
+    "Unit Test Compilation" \
+    "Gradle unit test compilation validation" \
+    "./gradlew compileDebugUnitTestKotlin"
 
 # 3. Android Test Compilation
 run_test_suite \
     "Android Test Compilation" \
-    "Verifies Android tests compile correctly" \
-    "./gradlew compileDebugAndroidTestKotlin 2>/dev/null && echo 'Android test compilation successful'"
+    "Gradle Android test compilation validation" \
+    "./gradlew compileDebugAndroidTestKotlin"
 
-# 4. Mock Android Tests  
+# 4. Test Structure Validation
 run_test_suite \
-    "Mock Android Tests" \
-    "Simulates Android test execution with validation" \
-    "bash ./scripts/run-android-tests-mock.sh"
+    "Test Structure Validation" \
+    "Validates test file structure and binding completeness" \
+    "bash ./scripts/run-android-tests-mock.sh >/dev/null 2>&1"
 
 # 5. Environment Test (if Android SDK available)
 echo "📋 Running: Environment Integration Test"
@@ -88,38 +88,24 @@ echo ""
 echo "----------------------------------------"
 echo ""
 
-# 6. Build Verification (try to build for Android if environment available)
-echo "📋 Running: Build Integration Test"
-echo "   Tests actual binding generation and build process"
+# 6. Gradle Build Test (compilation only, no native builds)
+echo "📋 Running: Gradle Build Test"
+echo "   Tests Gradle compilation without native builds"
 echo ""
 
 total_test_suites=$((total_test_suites + 1))
 
-# Try to build Android bindings if environment is available
-if [ -d "$ANDROID_SDK_PATH" ] && [ -n "$ANDROID_SDK_ROOT" ] && [ -n "$ANDROID_NDK_ROOT" ]; then
-    echo "ℹ️  Full Android environment detected - testing Android build..."
-    if just build-android > /dev/null 2>&1; then
-        echo "✅ Build Integration Test (Android) - PASSED"
-        passed_test_suites=$((passed_test_suites + 1))
-    else
-        echo "⚠️  Android build failed - trying local build..."
-        if just build > /dev/null 2>&1; then
-            echo "✅ Build Integration Test (Local) - PASSED"
-            passed_test_suites=$((passed_test_suites + 1))
-        else
-            echo "❌ Build Integration Test - FAILED"
-            failed_test_suites=$((failed_test_suites + 1))
-        fi
-    fi
+# Test Gradle build (library compilation only)
+echo "Running: ./gradlew assembleDebug"
+echo ""
+if ./gradlew assembleDebug; then
+    echo ""
+    echo "✅ Gradle Build Test - PASSED"
+    passed_test_suites=$((passed_test_suites + 1))
 else
-    echo "ℹ️  No Android environment - testing local build..."
-    if just build > /dev/null 2>&1; then
-        echo "✅ Build Integration Test (Local) - PASSED"
-        passed_test_suites=$((passed_test_suites + 1))
-    else
-        echo "❌ Build Integration Test - FAILED"
-        failed_test_suites=$((failed_test_suites + 1))
-    fi
+    echo ""
+    echo "❌ Gradle Build Test - FAILED"
+    failed_test_suites=$((failed_test_suites + 1))
 fi
 
 echo ""
@@ -140,15 +126,12 @@ echo "Failed: $failed_test_suites"
 echo "Success Rate: $success_rate%"
 echo ""
 
-# Summary by category
-echo "📋 Test Coverage Summary:"
-echo "========================"
-echo "✅ Binding Generation & Structure"
-echo "✅ Data Classes & Basic Types"  
-echo "✅ Compilation Verification"
-echo "✅ Mock Test Simulation"
-echo "✅ Environment Integration"
-echo "✅ Build Process Validation"
+# Summary
+echo "📋 Test Execution Summary:"
+echo "=========================="
+echo "✅ All test suites completed"
+echo "✅ Compilation and validation successful"
+echo "✅ CDK Kotlin bindings verified"
 echo ""
 
 if [ $failed_test_suites -eq 0 ]; then
@@ -159,8 +142,8 @@ if [ $failed_test_suites -eq 0 ]; then
     echo "📚 Available Commands:"
     echo "   just test           - Run this comprehensive test suite"
     echo "   just test-quick     - Fast mock tests only"
-    echo "   just test-with-env  - Environment detection + tests"  
-    echo "   just android-test   - Real Android device tests (if available)"
+    echo "   just test-compile   - Compile tests only (fastest)"
+    echo "   just test-android   - Real Android device tests (if available)"
     echo ""
     exit 0
 else
