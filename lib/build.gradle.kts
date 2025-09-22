@@ -90,14 +90,14 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 
-                groupId = "org.cashudevkit"
+                groupId = "io.github.thesimplekid"
                 artifactId = "cdk-kotlin"
                 version = "0.1.0"
                 
                 pom {
                     name.set("cdk-kotlin")
                     description.set("Kotlin bindings for Cashu Development Kit")
-                    url.set("https://github.com/cashubtc/cdk")
+                    url.set("https://github.com/thesimplekid/cdk-kotlin")
                     
                     licenses {
                         license {
@@ -108,15 +108,15 @@ afterEvaluate {
                     
                     developers {
                         developer {
-                            id.set("cashubtc")
-                            name.set("Cashu BTC")
+                            id.set("thesimplekid")
+                            name.set("thesimplekid")
                         }
                     }
                     
                     scm {
-                        connection.set("scm:git:github.com/cashubtc/cdk.git")
-                        developerConnection.set("scm:git:ssh://github.com/cashubtc/cdk.git")
-                        url.set("https://github.com/cashubtc/cdk")
+                        connection.set("scm:git:github.com/thesimplekid/cdk-kotlin.git")
+                        developerConnection.set("scm:git:ssh://github.com/thesimplekid/cdk-kotlin.git")
+                        url.set("https://github.com/thesimplekid/cdk-kotlin")
                     }
                 }
             }
