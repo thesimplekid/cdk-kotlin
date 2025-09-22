@@ -107,6 +107,10 @@ This updates the auto-generated `cdk_ffi.kt` file with the latest bindings.
 just test
 ```
 
+### Publishing Setup
+
+For maintainers publishing to Maven Central, see [`CENTRAL_PORTAL_SETUP.md`](./CENTRAL_PORTAL_SETUP.md) for detailed instructions on setting up Central Portal credentials.
+
 ## License
 
 This project is licensed under the MIT License.

@@ -8,8 +8,11 @@ plugins {
 nexusPublishing {
     repositories {
         sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            // Portal's OSSRH Staging API compatibility layer
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            // Snapshots go directly to Central Portal's snapshots repo
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+            stagingProfileId.set("dc113075-9cc4-42fd-8c1c-bd48054d1d0d")
             username.set(project.findProperty("sonatypeUsername") as String? ?: "")
             password.set(project.findProperty("sonatypePassword") as String? ?: "")
         }
