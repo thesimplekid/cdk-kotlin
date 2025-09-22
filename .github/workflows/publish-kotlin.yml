@@ -138,8 +138,7 @@ jobs:
         ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
       run: |
-        ./gradlew :lib:publishToSonatype
-        ./gradlew closeAndReleaseRepository
+        ./gradlew :lib:publishToSonatype closeAndReleaseRepository
 
     - name: Create and push tag
       run: |
