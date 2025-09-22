@@ -27,7 +27,7 @@ Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.thesimplekid:cdk-kotlin:0.1.0")
+    implementation("io.github.thesimplekid:cdk-kotlin:0.0.1-test")
 }
 ```
 
