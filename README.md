@@ -27,7 +27,7 @@ Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("org.cashudevkit:cdk-kotlin:0.1.0")
+    implementation("io.github.thesimplekid:cdk-kotlin:0.1.0")
 }
 ```
 
@@ -106,6 +106,10 @@ This updates the auto-generated `cdk_ffi.kt` file with the latest bindings.
 ```bash
 just test
 ```
+
+### Publishing Setup
+
+For maintainers publishing to Maven Central, see [`CENTRAL_PORTAL_SETUP.md`](./CENTRAL_PORTAL_SETUP.md) for detailed instructions on setting up Central Portal credentials.
 
 ## License
 
