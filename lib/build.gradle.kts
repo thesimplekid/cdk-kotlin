@@ -143,8 +143,10 @@ val localBuild: Boolean = project.hasProperty("localBuild")
 signing {
     val signingKey: String? by project
     val signingPassword: String? by project
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications)
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword ?: "")
+        sign(publishing.publications)
+    }
 }
 
 if (localBuild) {
