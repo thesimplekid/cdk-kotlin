@@ -55,6 +55,11 @@ jobs:
         path: cdk
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: "stable"
+
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
       with:
