@@ -107,9 +107,9 @@ jobs:
     - name: Generate Kotlin bindings
       run: |
         cd cdk/crates/cdk-ffi
-        cargo build --release
+        cargo build --profile release-smaller
         cargo run --bin uniffi-bindgen generate \
-          --library ../../target/release/libcdk_ffi.so \
+          --library ../../target/release-smaller/libcdk_ffi.so \
           --language kotlin \
           --no-format \
           --out-dir ../../../lib/src/main/kotlin
