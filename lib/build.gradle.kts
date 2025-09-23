@@ -96,7 +96,7 @@ afterEvaluate {
                 pom {
                     name.set("cdk-kotlin")
                     description.set("Kotlin bindings for Cashu Development Kit")
-                    url.set("https://github.com/thesimplekid/cdk-kotlin")
+                    url.set("https://github.com/cashubtc/cdk-kotlin")
                     
                     licenses {
                         license {
@@ -107,15 +107,15 @@ afterEvaluate {
                     
                     developers {
                         developer {
-                            id.set("thesimplekid")
-                            name.set("thesimplekid")
+                            id.set("cashubtc")
+                            name.set("cashubtc")
                         }
                     }
                     
                     scm {
-                        connection.set("scm:git:github.com/thesimplekid/cdk-kotlin.git")
-                        developerConnection.set("scm:git:ssh://github.com/thesimplekid/cdk-kotlin.git")
-                        url.set("https://github.com/thesimplekid/cdk-kotlin")
+                        connection.set("scm:git:github.com/cashubtc/cdk-kotlin.git")
+                        developerConnection.set("scm:git:ssh://github.com/cashubtc/cdk-kotlin.git")
+                        url.set("https://cashudevkit.org")
                     }
                 }
             }
