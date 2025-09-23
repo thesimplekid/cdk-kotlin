@@ -67,9 +67,27 @@ fi
 echo "Using NDK toolchain: $NDK_TOOLCHAIN_ROOT"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CDK_FFI_DIR="${SCRIPT_DIR}/../../cdk/crates/cdk-ffi"
+
+# Check if we're in GitHub Actions (CDK repo checked out at root level)
+if [ -d "${SCRIPT_DIR}/../cdk/crates/cdk-ffi" ]; then
+    CDK_FFI_DIR="${SCRIPT_DIR}/../cdk/crates/cdk-ffi"
+else
+    # Local development setup
+    CDK_FFI_DIR="${SCRIPT_DIR}/../../cdk/crates/cdk-ffi"
+fi
+
 ANDROID_MAIN="${SCRIPT_DIR}/../lib/src/main"
 JNI_LIBS="${ANDROID_MAIN}/jniLibs"
+
+# Verify CDK FFI directory exists
+if [ ! -d "$CDK_FFI_DIR" ]; then
+    echo "Error: CDK FFI directory not found at: $CDK_FFI_DIR"
+    echo "Please ensure the CDK repository is properly checked out"
+    echo "Looking for cdk/crates/cdk-ffi directory"
+    exit 1
+fi
+
+echo "Using CDK FFI directory: $CDK_FFI_DIR"
 
 # Create directories if they don't exist
 mkdir -p "${JNI_LIBS}/arm64-v8a"
@@ -108,18 +126,21 @@ CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_armv7_linux_androideabi="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 cargo build --target armv7-linux-androideabi --release
 
+# Determine target directory based on CDK FFI location
+CDK_TARGET_DIR="${CDK_FFI_DIR}/../../target"
+
 # Copy libraries to JNI directories
 echo "Copying libraries..."
-cp "${CDK_FFI_DIR}/../../target/aarch64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/arm64-v8a/"
-cp "${CDK_FFI_DIR}/../../target/x86_64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/x86_64/"
-cp "${CDK_FFI_DIR}/../../target/armv7-linux-androideabi/release/libcdk_ffi.so" "${JNI_LIBS}/armeabi-v7a/"
+cp "${CDK_TARGET_DIR}/aarch64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/arm64-v8a/"
+cp "${CDK_TARGET_DIR}/x86_64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/x86_64/"
+cp "${CDK_TARGET_DIR}/armv7-linux-androideabi/release/libcdk_ffi.so" "${JNI_LIBS}/armeabi-v7a/"
 
 # Generate Kotlin bindings
 echo "Generating Kotlin bindings..."
 cargo run --bin uniffi-bindgen generate \
     --language kotlin \
     --out-dir "${ANDROID_MAIN}/kotlin" \
-    --library "${CDK_FFI_DIR}/../../target/aarch64-linux-android/release/libcdk_ffi.so" \
+    --library "${CDK_TARGET_DIR}/aarch64-linux-android/release/libcdk_ffi.so" \
     --no-format
 
 echo "Build complete!"
