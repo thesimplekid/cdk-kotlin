@@ -12,14 +12,14 @@ cd "$CDK_FFI_DIR"
 
 # Build for macOS (for testing/development)
 echo "Building for macOS aarch64..."
-cargo build --release
+cargo build --profile release-smaller
 
 # Generate Kotlin bindings
 echo "Generating Kotlin bindings..."
 cargo run --bin uniffi-bindgen generate \
     --language kotlin \
     --out-dir "${ANDROID_MAIN}/kotlin" \
-    --library "${CDK_FFI_DIR}/../../target/release/libcdk_ffi.dylib" \
+    --library "${CDK_FFI_DIR}/../../target/release-smaller/libcdk_ffi.dylib" \
     --no-format
 
 echo "Build complete!"

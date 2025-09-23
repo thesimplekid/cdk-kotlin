@@ -108,7 +108,7 @@ CC_aarch64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/aarch64-linux-android24-clan
 CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/aarch64-linux-android24-clang" \
 CARGO_TARGET_AARCH64_LINUX_ANDROID_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_aarch64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target aarch64-linux-android --release
+cargo build --target aarch64-linux-android --profile release-smaller
 
 # Build for x86_64
 echo "Building for x86_64..."
@@ -116,7 +116,7 @@ CC_x86_64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/x86_64-linux-android24-clang"
 CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/x86_64-linux-android24-clang" \
 CARGO_TARGET_X86_64_LINUX_ANDROID_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_x86_64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target x86_64-linux-android --release
+cargo build --target x86_64-linux-android --profile release-smaller
 
 # Build for ARMv7
 echo "Building for ARMv7..."
@@ -124,23 +124,23 @@ CC_armv7_linux_androideabi="${NDK_TOOLCHAIN_ROOT}/bin/armv7a-linux-androideabi24
 CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/armv7a-linux-androideabi24-clang" \
 CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_armv7_linux_androideabi="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target armv7-linux-androideabi --release
+cargo build --target armv7-linux-androideabi --profile release-smaller
 
 # Determine target directory based on CDK FFI location
 CDK_TARGET_DIR="${CDK_FFI_DIR}/../../target"
 
 # Copy libraries to JNI directories
 echo "Copying libraries..."
-cp "${CDK_TARGET_DIR}/aarch64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/arm64-v8a/"
-cp "${CDK_TARGET_DIR}/x86_64-linux-android/release/libcdk_ffi.so" "${JNI_LIBS}/x86_64/"
-cp "${CDK_TARGET_DIR}/armv7-linux-androideabi/release/libcdk_ffi.so" "${JNI_LIBS}/armeabi-v7a/"
+cp "${CDK_TARGET_DIR}/aarch64-linux-android/release-smaller/libcdk_ffi.so" "${JNI_LIBS}/arm64-v8a/"
+cp "${CDK_TARGET_DIR}/x86_64-linux-android/release-smaller/libcdk_ffi.so" "${JNI_LIBS}/x86_64/"
+cp "${CDK_TARGET_DIR}/armv7-linux-androideabi/release-smaller/libcdk_ffi.so" "${JNI_LIBS}/armeabi-v7a/"
 
 # Generate Kotlin bindings
 echo "Generating Kotlin bindings..."
 cargo run --bin uniffi-bindgen generate \
     --language kotlin \
     --out-dir "${ANDROID_MAIN}/kotlin" \
-    --library "${CDK_TARGET_DIR}/aarch64-linux-android/release/libcdk_ffi.so" \
+    --library "${CDK_TARGET_DIR}/aarch64-linux-android/release-smaller/libcdk_ffi.so" \
     --no-format
 
 echo "Build complete!"

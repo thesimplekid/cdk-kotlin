@@ -38,7 +38,7 @@ generate:
     # Build the cdk-ffi library first
     echo "📦 Building cdk-ffi library..."
     cd ../cdk/crates/cdk-ffi
-    cargo build --release
+    cargo build --profile release-smaller
 
     # Generate Kotlin bindings
     echo "🎯 Generating Kotlin bindings..."
@@ -55,7 +55,7 @@ generate:
         exit 1
     fi
 
-    LIB_PATH="../../target/release/libcdk_ffi.$LIB_EXT"
+    LIB_PATH="../../target/release-smaller/libcdk_ffi.$LIB_EXT"
 
     # Check if library exists
     if [ ! -f "$LIB_PATH" ]; then
