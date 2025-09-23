@@ -126,7 +126,7 @@ jobs:
 
     - name: Update version in README.md
       run: |
-        sed -i 's/implementation("[^"]*:cdk-kotlin:[^"]*")/implementation("io.github.thesimplekid:cdk-kotlin:${{ steps.vars.outputs.version }}")/' README.md
+        sed -i 's/implementation("[^"]*:cdk-kotlin:[^"]*")/implementation("org.cashudevkit:cdk-kotlin:${{ steps.vars.outputs.version }}")/' README.md
 
     - name: Build library
       run: ./gradlew :lib:assembleRelease
@@ -180,7 +180,7 @@ jobs:
 
           ```kotlin
           dependencies {
-              implementation("io.github.thesimplekid:cdk-kotlin:${{ steps.vars.outputs.version }}")
+              implementation("org.cashudevkit:cdk-kotlin:${{ steps.vars.outputs.version }}")
           }
           ```
 

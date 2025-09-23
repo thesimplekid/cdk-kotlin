@@ -89,7 +89,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 
-                groupId = "io.github.thesimplekid"
+                groupId = "org.cashudevkit"
                 artifactId = "cdk-kotlin"
                 version = "0.1.0"
                 
