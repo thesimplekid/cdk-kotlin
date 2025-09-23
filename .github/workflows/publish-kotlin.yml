@@ -84,6 +84,9 @@ jobs:
         sdkmanager "ndk;25.2.9519653"
         echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
 
+    - name: Install just
+      uses: extractions/setup-just@v2
+
     - name: Install cargo-ndk
       run: cargo install cargo-ndk
 
@@ -105,14 +108,7 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
     - name: Generate Kotlin bindings
-      run: |
-        cd cdk/crates/cdk-ffi
-        cargo build --profile release-smaller
-        cargo run --bin uniffi-bindgen generate \
-          --library ../../target/release-smaller/libcdk_ffi.so \
-          --language kotlin \
-          --no-format \
-          --out-dir ../../../lib/src/main/kotlin
+      run: just generate
 
     - name: Build Android libraries
       run: |

@@ -28,16 +28,20 @@ generate:
     set -euo pipefail
     echo "🔄 Generating Kotlin bindings from cdk-ffi..."
 
-    # Check if cdk-ffi crate exists
-    if [ ! -d "../cdk/crates/cdk-ffi" ]; then
-        echo "❌ Error: cdk-ffi crate not found at ../cdk/crates/cdk-ffi"
-        echo "   Please ensure the CDK repository is cloned at ../cdk"
+    # Check if we're in GitHub Actions (CDK repo checked out at root level)
+    if [ -d "cdk/crates/cdk-ffi" ]; then
+        CDK_FFI_DIR="cdk/crates/cdk-ffi"
+    elif [ -d "../cdk/crates/cdk-ffi" ]; then
+        CDK_FFI_DIR="../cdk/crates/cdk-ffi"
+    else
+        echo "❌ Error: cdk-ffi crate not found"
+        echo "   Please ensure the CDK repository is cloned at ../cdk or ./cdk"
         exit 1
     fi
 
     # Build the cdk-ffi library first
     echo "📦 Building cdk-ffi library..."
-    cd ../cdk/crates/cdk-ffi
+    cd "$CDK_FFI_DIR"
     cargo build --profile release-smaller
 
     # Generate Kotlin bindings
@@ -64,15 +68,23 @@ generate:
         exit 1
     fi
 
+    # Determine the output directory based on where we started
+    if [ "$CDK_FFI_DIR" = "cdk/crates/cdk-ffi" ]; then
+        # CI environment - we're at project root
+        OUT_DIR="lib/src/main/kotlin"
+    else
+        # Local environment - we're in cdk-ffi subdirectory
+        OUT_DIR="../../../cdk-kotlin/lib/src/main/kotlin"
+    fi
+
     # Always skip formatting to avoid dependency on ktlint
     cargo run --bin uniffi-bindgen generate \
         --library "$LIB_PATH" \
         --language kotlin \
         --no-format \
-        --out-dir ../../../cdk-kotlin/lib/src/main/kotlin
+        --out-dir "$OUT_DIR"
 
     echo "✅ Kotlin bindings generated successfully!"
-    cd ../../../cdk-kotlin
 
 [group("Build")]
 [doc("Build for current platform only.")]
