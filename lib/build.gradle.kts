@@ -88,7 +88,7 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-                
+
                 groupId = "org.cashudevkit"
                 artifactId = "cdk-kotlin"
                 version = "0.13.4"
@@ -152,8 +152,21 @@ signing {
 if (localBuild) {
     tasks.register<Exec>("buildCdkLibrary") {
         workingDir = projectDir
-        // Use macOS build for local testing instead of Android
-        commandLine("bash", "../scripts/build-macos-aarch64.sh")
+        // Detect OS and use appropriate build script
+        val osName = System.getProperty("os.name").lowercase()
+        val buildScript = when {
+            osName.contains("mac") -> {
+                val arch = System.getProperty("os.arch")
+                if (arch == "aarch64" || arch == "arm64") {
+                    "../scripts/build-macos-aarch64.sh"
+                } else {
+                    "../scripts/build-macos-x86_64.sh"
+                }
+            }
+            osName.contains("linux") -> "../scripts/build-android.sh"
+            else -> throw GradleException("Unsupported OS for local build: $osName")
+        }
+        commandLine("bash", buildScript)
     }
 
     tasks.named("preBuild") {

@@ -166,7 +166,7 @@ check:
     echo ""
 
     # Essential tools
-    command -v rustc >/dev/null && echo "✅ Rust" || echo "❌ Rust (install from https://rustup.rs)"
+    command -v rustc >/dev/null && echo "✅ Rust" || echo "❌ Rust (install via Nix)"
     command -v java >/dev/null && echo "✅ Java" || echo "❌ Java"
     command -v gradle >/dev/null && echo "✅ Gradle" || echo "❌ Gradle"
 

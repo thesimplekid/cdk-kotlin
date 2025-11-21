@@ -68,24 +68,28 @@ echo "Using NDK toolchain: $NDK_TOOLCHAIN_ROOT"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Check if we're in GitHub Actions (CDK repo checked out at root level)
+# Find CDK FFI directory - check multiple possible locations
 if [ -d "${SCRIPT_DIR}/../cdk/crates/cdk-ffi" ]; then
+    # GitHub Actions or local cdk directory
     CDK_FFI_DIR="${SCRIPT_DIR}/../cdk/crates/cdk-ffi"
-else
-    # Local development setup
+elif [ -d "${SCRIPT_DIR}/../../cdk/crates/cdk-ffi" ]; then
+    # Local development setup (cdk at same level as cdk-kotlin)
     CDK_FFI_DIR="${SCRIPT_DIR}/../../cdk/crates/cdk-ffi"
+elif [ -d "${SCRIPT_DIR}/../../cdk.git/crates/cdk-ffi" ]; then
+    # Local development with .git in repo name
+    CDK_FFI_DIR="${SCRIPT_DIR}/../../cdk.git/crates/cdk-ffi"
+else
+    echo "Error: CDK FFI directory not found"
+    echo "Checked locations:"
+    echo "  ${SCRIPT_DIR}/../cdk/crates/cdk-ffi"
+    echo "  ${SCRIPT_DIR}/../../cdk/crates/cdk-ffi"
+    echo "  ${SCRIPT_DIR}/../../cdk.git/crates/cdk-ffi"
+    echo "Please ensure the CDK repository is cloned in one of these locations"
+    exit 1
 fi
 
 ANDROID_MAIN="${SCRIPT_DIR}/../lib/src/main"
 JNI_LIBS="${ANDROID_MAIN}/jniLibs"
-
-# Verify CDK FFI directory exists
-if [ ! -d "$CDK_FFI_DIR" ]; then
-    echo "Error: CDK FFI directory not found at: $CDK_FFI_DIR"
-    echo "Please ensure the CDK repository is properly checked out"
-    echo "Looking for cdk/crates/cdk-ffi directory"
-    exit 1
-fi
 
 echo "Using CDK FFI directory: $CDK_FFI_DIR"
 
@@ -97,34 +101,29 @@ mkdir -p "${ANDROID_MAIN}/kotlin"
 
 cd "$CDK_FFI_DIR"
 
-# Add Rust targets for Android
-rustup target add aarch64-linux-android
-rustup target add armv7-linux-androideabi
-rustup target add x86_64-linux-android
-
-# Build for ARM64
+# Build for ARM64 (without postgres to avoid OpenSSL)
 echo "Building for ARM64..."
 CC_aarch64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/aarch64-linux-android24-clang" \
 CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/aarch64-linux-android24-clang" \
 CARGO_TARGET_AARCH64_LINUX_ANDROID_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_aarch64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target aarch64-linux-android --profile release-smaller
+cargo build --target aarch64-linux-android --profile release-smaller --no-default-features
 
-# Build for x86_64
+# Build for x86_64 (without postgres to avoid OpenSSL)
 echo "Building for x86_64..."
 CC_x86_64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/x86_64-linux-android24-clang" \
 CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/x86_64-linux-android24-clang" \
 CARGO_TARGET_X86_64_LINUX_ANDROID_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_x86_64_linux_android="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target x86_64-linux-android --profile release-smaller
+cargo build --target x86_64-linux-android --profile release-smaller --no-default-features
 
-# Build for ARMv7
+# Build for ARMv7 (without postgres to avoid OpenSSL)
 echo "Building for ARMv7..."
 CC_armv7_linux_androideabi="${NDK_TOOLCHAIN_ROOT}/bin/armv7a-linux-androideabi24-clang" \
 CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER="${NDK_TOOLCHAIN_ROOT}/bin/armv7a-linux-androideabi24-clang" \
 CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_AR="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
 AR_armv7_linux_androideabi="${NDK_TOOLCHAIN_ROOT}/bin/llvm-ar" \
-cargo build --target armv7-linux-androideabi --profile release-smaller
+cargo build --target armv7-linux-androideabi --profile release-smaller --no-default-features
 
 # Determine target directory based on CDK FFI location
 CDK_TARGET_DIR="${CDK_FFI_DIR}/../../target"
