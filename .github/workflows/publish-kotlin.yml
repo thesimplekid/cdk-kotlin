@@ -126,7 +126,7 @@ jobs:
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
       run: |
         echo "Publishing to Central Portal via staging API..."
-        nix develop .#ci --command ./gradlew :lib:publishToSonatype closeAndReleaseSonatypeStagingRepository
+        nix develop .#ci --command ./gradlew --no-configuration-cache :lib:publishToSonatype closeAndReleaseSonatypeStagingRepository
 
     - name: Create and push tag
       run: |
