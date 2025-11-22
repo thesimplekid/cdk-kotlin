@@ -91,7 +91,7 @@ afterEvaluate {
 
                 groupId = "org.cashudevkit"
                 artifactId = "cdk-kotlin"
-                version = "v0.14.1-rc0"
+                version = "0.14.1"
                 
                 pom {
                     name.set("cdk-kotlin")
