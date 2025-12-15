@@ -83,6 +83,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
 }
 
+val localBuild: Boolean = project.hasProperty("localBuild")
+val baseVersion = "0.14.2"
+val publishVersion = if (localBuild) "$baseVersion-local" else baseVersion
+
 afterEvaluate {
     publishing {
         publications {
@@ -91,7 +95,7 @@ afterEvaluate {
 
                 groupId = "org.cashudevkit"
                 artifactId = "cdk-kotlin"
-                version = "0.14.2"
+                version = publishVersion
                 
                 pom {
                     name.set("cdk-kotlin")
@@ -136,9 +140,14 @@ afterEvaluate {
             }
         }
     }
-}
 
-val localBuild: Boolean = project.hasProperty("localBuild")
+    tasks.named("publishReleasePublicationToMavenLocal") {
+        val message = "Published org.cashudevkit:cdk-kotlin:$publishVersion to local repository"
+        doLast {
+            println(message)
+        }
+    }
+}
 
 signing {
     val signingKey: String? by project
