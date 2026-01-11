@@ -84,7 +84,7 @@ dependencies {
 }
 
 val localBuild: Boolean = project.hasProperty("localBuild")
-val baseVersion = "0.14.3-rc.2"
+val baseVersion = "0.14.3"
 val publishVersion = if (localBuild) "$baseVersion-local" else baseVersion
 
 afterEvaluate {
