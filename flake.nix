@@ -62,7 +62,7 @@
 
         # Toolchains
         # Stable toolchain with Android targets
-        stable_toolchain = pkgs.rust-bin.stable."1.85.0".default.override {
+        stable_toolchain = pkgs.rust-bin.stable."1.93.0".default.override {
           targets = [
             "aarch64-linux-android"
             "armv7-linux-androideabi"
